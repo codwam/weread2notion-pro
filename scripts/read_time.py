@@ -48,7 +48,7 @@ if __name__ == "__main__":
         block_id = notion_helper.image_dict.get("id")
         branch = os.getenv("REF").split("/")[-1]
         repository =  os.getenv("REPOSITORY")
-        new_image_url = f"https://raw.githubusercontent.com/{repository}/{branch}/OUT_FOLDER/weread.svg"
+        new_image_url = f"https://raw.githubusercontent.com/{repository}/{branch}/OUT_FOLDER/weread.svg" # TODO: Notion 相同的 URL 不会一直刷新，可以加上随机参数 ?random={datetime.now().timestamp()}
         if(image_url and block_id):
             notion_helper.update_image_block_link(block_id,new_image_url)
     api_data = weread_api.get_api_data()

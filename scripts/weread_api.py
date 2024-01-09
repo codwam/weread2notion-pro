@@ -18,8 +18,8 @@ WEREAD_READDATA_DETAIL = "https://i.weread.qq.com/readdata/detail"
 WEREAD_HISTORY_URL = "https://i.weread.qq.com/readdata/summary?synckey=0"
 
 class WeReadApi:
-    def __init__(self):
-        self.cookie = os.getenv("WEREAD_COOKIE")
+    def __init__(self, cookie=None):
+        self.cookie = cookie if cookie != None else os.getenv("WEREAD_COOKIE")
         self.session = requests.Session()
         self.session.cookies = self.parse_cookie_string()
 
@@ -51,17 +51,21 @@ class WeReadApi:
     @retry(stop_max_attempt_number=3, wait_fixed=5000)
     def get_bookinfo(self, bookId):
         """获取书的详情"""
-        self.session.get(WEREAD_URL)
-        params = dict(bookId=bookId)
-        r = self.session.get(WEREAD_BOOK_INFO, params=params)
-        isbn = ""
-        if r.ok:
-            data = r.json()
+        data = self.get_bookinfo_data(bookId)
+        if data != None:
             isbn = data["isbn"]
             newRating = data["newRating"] / 1000
             return (isbn, newRating)
         else:
             return ("", 0)
+        
+    @retry(stop_max_attempt_number=3, wait_fixed=5000)
+    def get_bookinfo_data(self, bookId):
+        """获取书的详情"""
+        self.session.get(WEREAD_URL)
+        params = dict(bookId=bookId)
+        r = self.session.get(WEREAD_BOOK_INFO, params=params)
+        return r.json() if r.ok else None
 
     @retry(stop_max_attempt_number=3, wait_fixed=5000)
     def get_bookmark_list(self, bookId):
