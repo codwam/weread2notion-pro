@@ -68,9 +68,12 @@ class SingleWeread:
                         Helper.write_obj(f"tmp/《{title}》 - 目录", chapter)
                         chapter_output = []
                         for key, value in chapter.items():
-                            if value["level"] == 1:
-                                chapter_output.append(value["title"])
-                        Helper.write(f"tmp/《{title}》 - 目录 (修改)", "\n\n".join(chapter_output))
+                            # 只要 1 级标题
+                            # if value["level"] == 1:
+                            #     chapter_output.append(value["title"])
+                            # 全部标题都要
+                            chapter_output.append(f"{int(value['level']) * '#'} {value['title']}")
+                        Helper.write(f"tmp/《{title}》 - 目录 (修改)", "\n".join(chapter_output))
                         bookmark_list = self.__weread_api.get_bookmark_list(bookId)
                         Helper.write_obj(f"tmp/《{title}》 - 划线", bookmark_list)
                         reviews = self.__weread_api.get_review_list(bookId)
